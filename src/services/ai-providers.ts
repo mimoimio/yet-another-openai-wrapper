@@ -1,17 +1,17 @@
 // Abstract interface for AI providers
 export interface AIProvider {
-    generateResponse(context: Array<{role: string, content: string}>): Promise<string>;
+    generateResponse(context: Array<{ role: string, content: string }>): Promise<string>;
 }
 
 // OpenAI implementation
 export class OpenAIProvider implements AIProvider {
     private apiKey: string;
-    
+
     constructor(apiKey: string) {
         this.apiKey = apiKey;
     }
 
-    async generateResponse(context: Array<{role: string, content: string}>): Promise<string> {
+    async generateResponse(context: Array<{ role: string, content: string }>): Promise<string> {
         try {
             const response = await fetch('https://api.openai.com/v1/chat/completions', {
                 method: 'POST',
@@ -26,11 +26,11 @@ export class OpenAIProvider implements AIProvider {
                     temperature: 0.7
                 })
             });
-            
+
             if (!response.ok) {
                 throw new Error(`OpenAI API error: ${response.status}`);
             }
-            
+
             const data = await response.json();
             return data.choices[0].message.content;
         } catch (error) {
@@ -53,21 +53,21 @@ export class MockAIProvider implements AIProvider {
         "Let me provide you with some insights on that topic...",
     ];
 
-    async generateResponse(context: Array<{role: string, content: string}>): Promise<string> {
+    async generateResponse(context: Array<{ role: string, content: string }>): Promise<string> {
         // Simulate API delay
         await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
-        
+
         // Simple context awareness - respond differently based on recent messages
         const userMessage = context[context.length - 1]?.content.toLowerCase() || '';
-        
+
         if (userMessage.includes('hello') || userMessage.includes('hi')) {
             return "Hello! How can I assist you today?";
         }
-        
+
         if (userMessage.includes('thank')) {
             return "You're welcome! Is there anything else I can help you with?";
         }
-        
+
         // Return random response
         const randomIndex = Math.floor(Math.random() * this.responses.length);
         return this.responses[randomIndex];

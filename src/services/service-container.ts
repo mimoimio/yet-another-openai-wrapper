@@ -10,10 +10,10 @@ export class ServiceContainer {
     private constructor() {
         // Initialize based on environment and available API keys
         this.contextManager = new ChatContextManager();
-        
+
         const openaiKey = process.env.OPENAI_API_KEY;
         const aiProviderType = process.env.AI_PROVIDER || 'mock';
-        
+
         if (aiProviderType === 'openai' && openaiKey) {
             console.log('Using OpenAI provider');
             this.aiProvider = new OpenAIProvider(openaiKey);

@@ -7,14 +7,14 @@ export class ChatContextManager {
         content: 'You are a helpful AI assistant. Be concise, friendly, and provide useful information. Keep your responses focused and relevant to the conversation.'
     };
 
-    async buildContext(chatId: string): Promise<Array<{role: string, content: string}>> {
+    async buildContext(chatId: string): Promise<Array<{ role: string, content: string }>> {
         try {
             // Get all messages for this chat
             const messages = await pocketbaseService.getMessages(chatId);
-            
+
             // Take only the last MAX_MESSAGES messages
             const recentMessages = messages.slice(-this.MAX_MESSAGES);
-            
+
             // Build context array: [system_message, ...recent_messages]
             const context = [
                 this.SYSTEM_MESSAGE,
@@ -23,7 +23,7 @@ export class ChatContextManager {
                     content: msg.content
                 }))
             ];
-            
+
             console.log(`Built context with ${context.length - 1} messages for chat ${chatId}`);
             return context;
         } catch (error) {
@@ -39,7 +39,7 @@ export class ChatContextManager {
         return Math.ceil(text.length / 4);
     }
 
-    async buildContextWithTokenLimit(chatId: string, maxTokens: number = 4000): Promise<Array<{role: string, content: string}>> {
+    async buildContextWithTokenLimit(chatId: string, maxTokens: number = 4000): Promise<Array<{ role: string, content: string }>> {
         try {
             const messages = await pocketbaseService.getMessages(chatId);
             const context = [this.SYSTEM_MESSAGE];
@@ -52,7 +52,7 @@ export class ChatContextManager {
                     console.log(`Token limit reached at ${tokenCount} tokens`);
                     break;
                 }
-                
+
                 context.splice(1, 0, {
                     role: messages[i].role,
                     content: messages[i].content

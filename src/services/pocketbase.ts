@@ -222,7 +222,7 @@ class PocketBaseService {
                 filter: `chat_id = "${chatId}"`,
                 sort: '-created', // Most recent first
             });
-            
+
             // Return in chronological order (oldest first)
             return records.items.reverse().map(record => ({
                 msg_id: record.id,

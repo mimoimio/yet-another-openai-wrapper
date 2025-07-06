@@ -28,10 +28,10 @@ export async function POST(
 
         // Build context with message history (including the new user message)
         const context = await contextManager.buildContext(chatId);
-        
+
         // Generate AI response using injected provider
         const aiResponse = await aiProvider.generateResponse(context);
-        
+
         // Create AI message
         const aiMessage = await pocketbaseService.createMessage(chatId, 'assistant', aiResponse);
         if (!aiMessage) {
