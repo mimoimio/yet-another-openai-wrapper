@@ -15,7 +15,7 @@ class PocketBaseService {
         if (this.isAuthenticated) return true;
 
         const maxRetries = 3;
-        const retryDelay = 1000; // 1 second
+        const retryDelay = 200; // 1 second
 
         try {
             const authData = await this.pb.collection('_superusers').authWithPassword(

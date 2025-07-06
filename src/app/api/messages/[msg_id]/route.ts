@@ -3,10 +3,11 @@ import { pocketbaseService } from '@/services/pocketbase';
 
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { msg_id: string } }
+    { params }: { params: Promise<{ msg_id: string }> }
 ) {
     try {
-        await pocketbaseService.deleteMessage(params.msg_id);
+        const { msg_id } = await params;
+        await pocketbaseService.deleteMessage(msg_id);
         return NextResponse.json({ success: true });
     } catch (error: any) {
         console.error('Failed to delete message:', error);
@@ -19,11 +20,12 @@ export async function DELETE(
 
 export async function PUT(
     request: NextRequest,
-    { params }: { params: { msg_id: string } }
+    { params }: { params: Promise<{ msg_id: string }> }
 ) {
     try {
         const { content } = await request.json();
-        const message = await pocketbaseService.updateMessage(params.msg_id, content);
+        const { msg_id } = await params;
+        const message = await pocketbaseService.updateMessage(msg_id, content);
         return NextResponse.json(message);
     } catch (error: any) {
         console.error('Failed to update message:', error);

@@ -13,12 +13,13 @@ interface SidebarProps {
     onChatSelect: (chatId: string) => void;
     onNewChat?: () => void;
     onChatDeleted?: () => void;
+    onChatUpdated?: () => void;
 }
 
-export function Sidebar({ chatHistory, selectedChatId, onChatSelect, onNewChat, onChatDeleted }: SidebarProps) {
+export function Sidebar({ chatHistory, selectedChatId, onChatSelect, onNewChat, onChatDeleted, onChatUpdated }: SidebarProps) {
     // You can add handlers for new chat, delete, settings as needed
     return (
-        <div className="flex flex-col h-full bg-background border-r">
+        <div className="flex flex-col h-full w-full bg-background border-r">
             <SidebarHeader onNewChat={onNewChat} />
             <Separator />
             <ChatHistoryList
@@ -27,6 +28,7 @@ export function Sidebar({ chatHistory, selectedChatId, onChatSelect, onNewChat, 
                 onChatSelect={onChatSelect}
                 onChatDelete={() => { }}
                 onChatDeleted={onChatDeleted}
+                onChatUpdated={onChatUpdated}
             />
             <Separator />
             <SidebarFooter onSettings={() => { }} />

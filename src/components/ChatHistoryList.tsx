@@ -5,7 +5,7 @@ import { History } from "lucide-react";
 import { ChatHistoryItem } from "@/components/ChatHistoryItem";
 import { ChatHistoryProps } from "@/types/chat";
 
-export function ChatHistoryList({ chats, selectedChatId, onChatSelect, onChatDelete, onChatDeleted }: ChatHistoryProps) {
+export function ChatHistoryList({ chats, selectedChatId, onChatSelect, onChatDelete, onChatDeleted, onChatUpdated }: ChatHistoryProps) {
     return (
         <div className="flex-1 overflow-hidden flex flex-col">
             <div className="p-4 pb-2">
@@ -27,6 +27,7 @@ export function ChatHistoryList({ chats, selectedChatId, onChatSelect, onChatDel
                                     onSelect={onChatSelect}
                                     onDelete={onChatDelete}
                                     onChatDeleted={onChatDeleted}
+                                    onChatUpdated={onChatUpdated}
                                 />
                             ))
                         ) : (

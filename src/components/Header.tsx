@@ -15,9 +15,10 @@ interface HeaderProps {
     onChatSelect: (chatId: string) => void;
     onNewChat?: () => void;
     onChatDeleted?: () => void;
+    onChatUpdated?: () => void;
 }
 
-export function Header({ chatHistory, selectedChatId, onChatSelect, onNewChat, onChatDeleted }: HeaderProps) {
+export function Header({ chatHistory, selectedChatId, onChatSelect, onNewChat, onChatDeleted, onChatUpdated }: HeaderProps) {
     return (
         <header className="flex items-center justify-between p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             {/* Left side - Mobile menu and title */}
@@ -37,6 +38,7 @@ export function Header({ chatHistory, selectedChatId, onChatSelect, onNewChat, o
                             onChatSelect={onChatSelect}
                             onNewChat={onNewChat}
                             onChatDeleted={onChatDeleted}
+                            onChatUpdated={onChatUpdated}
                         />
                     </SheetContent>
                 </Sheet>

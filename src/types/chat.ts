@@ -5,6 +5,7 @@ export interface ChatHistoryProps {
     onChatSelect?: (chatId: string) => void;
     onChatDelete?: (chatId: string) => void;
     onChatDeleted?: () => void; // Callback to refresh chat list after deletion
+    onChatUpdated?: () => void; // Callback to refresh chat list after title update
 }
 
 // PocketBase data model

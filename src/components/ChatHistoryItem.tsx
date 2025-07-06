@@ -1,9 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Trash2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Trash2, Edit2, Check, X } from "lucide-react";
 import { Chat } from "@/types/chat";
 import apiService from "@/services/api";
 
@@ -13,11 +14,69 @@ interface ChatHistoryItemProps {
     onSelect?: (chatId: string) => void;
     onDelete?: (chatId: string) => void;
     onChatDeleted?: () => void; // Callback to refresh chat list after deletion
+    onChatUpdated?: () => void; // Callback to refresh chat list after title update
 }
 
-export function ChatHistoryItem({ chat, isSelected, onSelect, onDelete, onChatDeleted }: ChatHistoryItemProps) {
+export function ChatHistoryItem({ chat, isSelected, onSelect, onDelete, onChatDeleted, onChatUpdated }: ChatHistoryItemProps) {
+    const [isEditing, setIsEditing] = useState(false);
+    const [editTitle, setEditTitle] = useState(chat.title);
+    const [isLoading, setIsLoading] = useState(false);
+
     const handleSelect = () => {
-        onSelect?.(chat.chat_id);
+        if (!isEditing) {
+            onSelect?.(chat.chat_id);
+        }
+    };
+
+    const handleEditStart = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setIsEditing(true);
+        setEditTitle(chat.title);
+    };
+
+    const handleEditCancel = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setIsEditing(false);
+        setEditTitle(chat.title);
+    };
+
+    const handleEditSave = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+
+        if (editTitle.trim() === chat.title.trim()) {
+            setIsEditing(false);
+            return;
+        }
+
+        if (!editTitle.trim()) {
+            alert('Title cannot be empty');
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            const success = await apiService.updateChat(chat.chat_id, editTitle.trim());
+            if (success) {
+                console.log('Chat title updated successfully');
+                setIsEditing(false);
+                onChatUpdated?.();
+            } else {
+                alert('Failed to update chat title. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error updating chat title:', error);
+            alert('An error occurred while updating the chat title.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleKeyPress = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            handleEditSave(e as any);
+        } else if (e.key === 'Escape') {
+            handleEditCancel(e as any);
+        }
     };
 
     const handleDelete = async (e: React.MouseEvent) => {
@@ -51,26 +110,77 @@ export function ChatHistoryItem({ chat, isSelected, onSelect, onDelete, onChatDe
             onClick={handleSelect}
         >
             <div className="flex items-start justify-between">
-
-
                 <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-medium truncate mb-1">
-                        {chat.title}
-                    </h3>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <span>{chat.created ? new Date(chat.created).toLocaleDateString() : "Today"}</span>
-                    </div>
+                    {isEditing ? (
+                        <div className="space-y-2">
+                            <Input
+                                value={editTitle}
+                                onChange={(e) => setEditTitle(e.target.value)}
+                                onKeyDown={handleKeyPress}
+                                onClick={(e) => e.stopPropagation()}
+                                className="text-sm font-medium h-8"
+                                disabled={isLoading}
+                                autoFocus
+                            />
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                <span>{chat.created ? new Date(chat.created).toLocaleDateString() : "Today"}</span>
+                            </div>
+                        </div>
+                    ) : (
+                        <>
+                            <h3 className="text-sm font-medium truncate mb-1">
+                                {chat.title}
+                            </h3>
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                <span>{chat.created ? new Date(chat.created).toLocaleDateString() : "Today"}</span>
+                            </div>
+                        </>
+                    )}
                 </div>
 
-
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                    onClick={handleDelete}
-                >
-                    <Trash2 className="h-3 w-3" />
-                </Button>
+                <div className="flex items-center gap-1">
+                    {isEditing ? (
+                        <>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-6"
+                                onClick={handleEditSave}
+                                disabled={isLoading}
+                            >
+                                <Check className="h-3 w-3 text-green-600" />
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-6"
+                                onClick={handleEditCancel}
+                                disabled={isLoading}
+                            >
+                                <X className="h-3 w-3 text-red-600" />
+                            </Button>
+                        </>
+                    ) : (
+                        <>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={handleEditStart}
+                            >
+                                <Edit2 className="h-3 w-3" />
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={handleDelete}
+                            >
+                                <Trash2 className="h-3 w-3" />
+                            </Button>
+                        </>
+                    )}
+                </div>
             </div>
         </Card>
     );

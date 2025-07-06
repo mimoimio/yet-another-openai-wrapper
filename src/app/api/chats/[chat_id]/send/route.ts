@@ -4,11 +4,12 @@ import { ServiceContainer } from '@/services/service-container';
 
 export async function POST(
     request: NextRequest,
-    { params }: { params: { chat_id: string } }
+    { params }: { params: Promise<{ chat_id: string }> }
 ) {
     try {
         const { content } = await request.json();
-        const chatId = params.chat_id;
+        const { chat_id } = await params;
+        const chatId = chat_id;
 
         // Get services from container
         const container = ServiceContainer.getInstance();

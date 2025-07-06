@@ -98,6 +98,7 @@ export function ChatLayout({ children }: ChatLayoutProps) {
                     onChatSelect={handleChatSelect}
                     onNewChat={createNewChat}
                     onChatDeleted={refreshChats}
+                    onChatUpdated={refreshChats}
                 />
                 <div className="flex-1 flex overflow-hidden">
                     <aside className="hidden md:flex w-80 border-r overflow-hidden">
@@ -107,6 +108,7 @@ export function ChatLayout({ children }: ChatLayoutProps) {
                             onChatSelect={handleChatSelect}
                             onNewChat={createNewChat}
                             onChatDeleted={refreshChats}
+                            onChatUpdated={refreshChats}
                         />
                     </aside>
                     <main className="flex-1 flex flex-col min-h-0">

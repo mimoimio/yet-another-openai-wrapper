@@ -55,7 +55,7 @@ export class MockAIProvider implements AIProvider {
 
     async generateResponse(context: Array<{ role: string, content: string }>): Promise<string> {
         // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
+        await new Promise(resolve => setTimeout(resolve, 200 + Math.random() * 200));
 
         // Simple context awareness - respond differently based on recent messages
         const userMessage = context[context.length - 1]?.content.toLowerCase() || '';
