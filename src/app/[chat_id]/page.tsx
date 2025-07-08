@@ -78,8 +78,8 @@ export default function ChatPage() {
 
     if (loading) {
         return (
-            <div className="flex-1 flex items-center justify-center bg-background/90">
-                <div className="text-lg">Loading messages...</div>
+            <div className="flex-1 flex items-center justify-center bg-linear-30 from-background/95 to to-foreground/95">
+                <div className="animate-spin text-9xl p-4 rounded-full border-4 flex flex-col text-center ">😂<span className="text-lg">loading</span></div>
             </div>
         );
     }

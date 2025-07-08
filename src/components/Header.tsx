@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
-import { Menu, MessageCircle } from "lucide-react";
+import { GithubIcon, Menu, MessageCircle } from "lucide-react";
 
 import { Sidebar } from "@/components/Sidebar";
 
@@ -66,7 +66,12 @@ export function Header({ chatHistory, selectedChatId, onChatSelect, onNewChat, o
                 {/* App title */}
                 <div className="flex items-center gap-2">
                     <MessageCircle className="h-6 w-6 text-primary" />
-                    <h1 className="text-xl font-semibold"><Link href={"/"}>MimoAi Chat</Link></h1>
+                    <h1 className="text-xl font-semibold hover:bg-linear-90 from-red-700 to-pink-700 hover:animate-pulse transition-all px-4 rounded-full"><Link href={"/"}>MimoAi Chat</Link></h1>
+                    <Link
+                        href={"https://github.com/mimoimio/yet-another-openai-wrapper"}
+                        target="_blank">
+                        <GithubIcon className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" />
+                    </Link>
                 </div>
             </div>
 
@@ -76,7 +81,7 @@ export function Header({ chatHistory, selectedChatId, onChatSelect, onNewChat, o
             <div className="flex items-center gap-2">
                 <DropdownMenu>
 
-                    <DropdownMenuTrigger className="min-w-[100px] max-w-[20dvw] truncate border-b-2 rounded-xl text-start px-4 py-2">{selectedModel?.name}</DropdownMenuTrigger>
+                    <DropdownMenuTrigger className="min-w-[100px] max-w-[20dvw] truncate border-b-2 rounded-xl text-start px-4 py-2 hover:animate-pulse hover:shadow-md hover:-translate-y-1 transition-transform">{selectedModel?.name}</DropdownMenuTrigger>
                     <DropdownMenuContent>
                         <DropdownMenuLabel>Ai Model</DropdownMenuLabel>
                         <DropdownMenuSeparator />{

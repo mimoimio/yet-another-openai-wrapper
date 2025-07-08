@@ -199,27 +199,19 @@ export function ChatLayout({ children }: ChatLayoutProps) {
                         <Image
                             src="/shroom.png"
                             alt="Background"
-                            className="absolute inset-0 object-cover w-full h-full opacity-10"
+                            className="absolute inset-0 object-cover w-full h-full"
                             fill
                         />
 
-                        <div className="flex flex-col h-full relative z-10">
+                        <div className="flex flex-col h-full relative z-10 bg-linear-30 from-background/95 to to-foreground/95">
                             {/* Chat Messages Area - matches ScrollArea and message cards */}
                             <div className="flex-1 min-h-0 overflow-auto">
                                 <div className="p-4">
-                                    <div className="space-y-6 max-w-6xl mx-auto">
+                                    <div className="space-y-6 max-w-2xl mx-auto">
                                         {/* AI Message Skeleton - matches assistant message */}
                                         <div className="flex gap-3 group justify-start">
-                                            <Skeleton className="h-8 w-8 rounded-full mt-1" /> {/* Bot avatar */}
-                                            <div className="flex flex-col gap-2 max-w-[80%] items-start">
-                                                <div className="relative">
-                                                    <div className="bg-muted/90 p-4 rounded-lg mr-12 border">
-                                                        <Skeleton className="h-4 w-full mb-2" />
-                                                        <Skeleton className="h-4 w-4/5 mb-2" />
-                                                        <Skeleton className="h-4 w-3/5" />
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <Skeleton className="h-8 w-8 rounded-full mt-1" />
+                                            <Skeleton className="h-64 w-2/3 rounded-2xl mt-1" />
                                         </div>
 
                                         {/* User Message Skeleton - matches user message */}
@@ -237,16 +229,7 @@ export function ChatLayout({ children }: ChatLayoutProps) {
                                         {/* Another AI Message Skeleton */}
                                         <div className="flex gap-3 group justify-start">
                                             <Skeleton className="h-8 w-8 rounded-full mt-1" />
-                                            <div className="flex flex-col gap-2 max-w-[80%] items-start">
-                                                <div className="relative">
-                                                    <div className="bg-muted/90 p-4 rounded-lg mr-12 border">
-                                                        <Skeleton className="h-4 w-full mb-2" />
-                                                        <Skeleton className="h-4 w-5/6 mb-2" />
-                                                        <Skeleton className="h-4 w-2/3 mb-2" />
-                                                        <Skeleton className="h-4 w-4/5" />
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <Skeleton className="h-64 w-2/3 rounded-2xl mt-1" />
                                         </div>
                                     </div>
                                 </div>
@@ -288,7 +271,7 @@ export function ChatLayout({ children }: ChatLayoutProps) {
                     selectedModel={selectedModel}
                 />
                 <div className="flex-1 flex overflow-hidden">
-                    <aside className="hidden md:flex w-80 border-r overflow-hidden">
+                    <aside className="hidden md:flex w-80 overflow-hidden">
                         <Sidebar
                             chatHistory={chats}
                             selectedChatId={selectedChatId}
