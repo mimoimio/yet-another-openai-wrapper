@@ -50,7 +50,7 @@ export function ChatDisplay({ messages, onSendMessage, onDeleteMessage, selected
     };
 
     return (
-        <div className="flex flex-col relative h-full bg-background/90">
+        <div className="flex flex-col relative h-full bg-linear-30 from-background/95 to to-foreground/95">
             {/* Chat Messages */}
             <ScrollArea className="flex-1 min-h-0">
                 <div className="p-4">

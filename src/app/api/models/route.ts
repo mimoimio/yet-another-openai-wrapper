@@ -12,11 +12,9 @@ export async function GET() {
             { name: "gemma2-9b-it", provider: "groq" },
             { name: "llama-3.1-8b-instant", provider: "groq" },
             { name: "llama-3.3-70b-versatile", provider: "groq" },
-            { name: "meta-llama/llama-guard-4-12b", provider: "groq" },
             { name: "deepseek-r1-distill-llama-70b", provider: "groq" },
             { name: "qwen/qwen3-32b", provider: "groq" },
             { name: "mistral-saba-24b", provider: "groq" },
-            { name: "meta-llama/llama-prompt-guard-2-86m", provider: "groq" },
             { name: "meta-llama/llama-4-maverick-17b-128e-instruct", provider: "groq" },
         ];
         return NextResponse.json(models);

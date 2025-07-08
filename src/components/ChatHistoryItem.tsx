@@ -107,7 +107,7 @@ export function ChatHistoryItem({ chat, isSelected, onSelect, onDelete, onChatDe
 
     return (
         <Card
-            className={"p-3 cursor-pointer hover:bg-pink-600 transition-colors group" + (isSelected ? " bg-pink-500" : "")}
+            className={"p-3 cursor-pointer hover:bg-pink-600 transition-all group hover:-translate-0.5  " + (isSelected ? " bg-pink-500" : "")}
             onClick={handleSelect}
         >
             <div className="flex items-start justify-between ">
