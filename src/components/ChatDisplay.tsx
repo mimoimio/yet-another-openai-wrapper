@@ -54,7 +54,7 @@ export function ChatDisplay({ messages, onSendMessage, onDeleteMessage, selected
             {/* Chat Messages */}
             <ScrollArea className="flex-1 min-h-0">
                 <div className="p-4">
-                    <div className="space-y-6 container mx-auto">
+                    <div className="space-y-6 container max-w-[80dvw] mx-auto">
                         {messages.map((message) => (
                             <div key={message.msg_id}
                                 className={`flex gap-3 group ${message.role === "user" ? "justify-end" : "justify-start"}`}>
