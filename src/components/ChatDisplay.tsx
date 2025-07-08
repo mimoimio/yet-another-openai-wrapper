@@ -54,7 +54,7 @@ export function ChatDisplay({ messages, onSendMessage, onDeleteMessage, selected
             {/* Chat Messages */}
             <ScrollArea className="flex-1 min-h-0">
                 <div className="p-4">
-                    <div className="space-y-6 container max-w-[80dvw] mx-auto">
+                    <div className="space-y-6 w-2xl max-w-[90dvw] mx-auto">
                         {messages.map((message) => (
                             <div key={message.msg_id}
                                 className={`flex gap-3 group ${message.role === "user" ? "justify-end" : "justify-start"}`}>
@@ -66,8 +66,8 @@ export function ChatDisplay({ messages, onSendMessage, onDeleteMessage, selected
                                     </Avatar>
                                 )}
 
-                                <div className={`flex flex-col gap-2 max-w-[80%] ${message.role === "user" ? "items-end" : "items-start"}`}>
-                                    <div className="relative">
+                                <div className={`flex flex-col gap-2 max-w-[90dvw]  ${message.role === "user" ? "items-end" : "items-start"}`}>
+                                    <div className="relative max-w-full">
                                         <Card className={`p-4 ${message.role === "user" ? "bg-foreground/50 ml-12" : "bg-muted/50 mr-12"}`}>
                                             <article className={`prose dark:prose-invert ${message.role === "user" ? "text-background" : ""}`}>
                                                 <MarkdownViewer source={message.content} />
