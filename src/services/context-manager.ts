@@ -1,7 +1,7 @@
 import { pocketbaseService } from './pocketbase';
 
 export class ChatContextManager {
-    private readonly MAX_MESSAGES = 5;
+    private readonly MAX_MESSAGES = 10;
     private readonly SYSTEM_MESSAGE = {
         role: 'system',
         content: 'You are a helpful AI assistant. Be concise, friendly, and provide useful information. Keep your responses focused and relevant to the conversation.'
@@ -24,7 +24,7 @@ export class ChatContextManager {
                 }))
             ];
 
-            console.log(`Built context with ${context.length - 1} messages for chat ${chatId}`);
+            // console.log(`Built context with ${context.length - 1} messages for chat ${chatId}`);
             return context;
         } catch (error) {
             console.error('Error building context:', error);

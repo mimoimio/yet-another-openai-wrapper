@@ -1,6 +1,7 @@
 // Abstract interface for AI providers
 export interface AIProvider {
     generateResponse(context: Array<{ role: string, content: string }>): Promise<string>;
+    generateTitle(firstMessage: string): Promise<string>;
 }
 
 // OpenAI implementation
@@ -38,6 +39,130 @@ export class OpenAIProvider implements AIProvider {
             throw error;
         }
     }
+
+    async generateTitle(firstMessage: string): Promise<string> {
+        try {
+            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${this.apiKey}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    model: 'gpt-3.5-turbo',
+                    messages: [
+                        {
+                            role: 'system',
+                            content: 'Generate a short, concise title (maximum 5 words) for a conversation that starts with the following message. Return only the title, no quotes or explanations.'
+                        },
+                        {
+                            role: 'user',
+                            content: firstMessage
+                        }
+                    ],
+                    max_tokens: 20,
+                    temperature: 0.3
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`OpenAI API error: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data.choices[0].message.content.trim();
+        } catch (error) {
+            console.error('Error generating title with OpenAI:', error);
+            // Fallback to truncated message
+            return firstMessage.length > 30 ? firstMessage.substring(0, 30) + "..." : firstMessage;
+        }
+    }
+}
+
+// Groq implementation
+export class GroqProvider implements AIProvider {
+    private apiKey: string;
+
+    constructor(apiKey: string) {
+        this.apiKey = apiKey;
+    }
+
+    async generateResponse(context: Array<{ role: string, content: string }>): Promise<string> {
+        try {
+            const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${this.apiKey}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    model: 'deepseek-r1-distill-llama-70b',
+                    messages: context,
+                    max_tokens: 750,
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`GROQ API error: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            console.log('contexts:', context);
+            // check input tokens count
+            if (data.usage && data.usage.prompt_tokens) {
+                console.warn(`GROQ API prompt tokens: ${data.usage.prompt_tokens}`);
+            }
+
+
+            // check tokens count
+            if (data.usage && data.usage.total_tokens) {
+                console.warn(`GROQ API response tokens: ${data.usage.total_tokens}`);
+            }
+
+            return data.choices[0].message.content;
+        } catch (error) {
+            console.error('Error calling GROQ API:', error);
+            throw error;
+        }
+    }
+
+    async generateTitle(firstMessage: string): Promise<string> {
+        try {
+            const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${this.apiKey}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    model: 'llama-3.1-8b-instant',
+                    messages: [
+                        {
+                            role: 'system',
+                            content: 'Generate a short, concise title (maximum 5 words) for a conversation that starts with the following message. Return only the title, no quotes or explanations.'
+                        },
+                        {
+                            role: 'user',
+                            content: firstMessage
+                        }
+                    ],
+                    max_tokens: 20,
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`GROQ API error: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data.choices[0].message.content.trim();
+        } catch (error) {
+            console.error('Error generating title with GROQ:', error);
+            // Fallback to truncated message
+            return firstMessage.length > 30 ? firstMessage.substring(0, 30) + "..." : firstMessage;
+        }
+    }
 }
 
 // Mock implementation for development
@@ -71,5 +196,11 @@ export class MockAIProvider implements AIProvider {
         // Return random response
         const randomIndex = Math.floor(Math.random() * this.responses.length);
         return this.responses[randomIndex];
+    }
+
+    async generateTitle(firstMessage: string): Promise<string> {
+        // Simple mock title generation logic
+        const words = firstMessage.split(' ').slice(0, 5);
+        return words.join(' ') + (words.length === 5 ? '...' : '');
     }
 }

@@ -13,11 +13,11 @@ interface ChatHistoryItemProps {
     isSelected?: boolean;
     onSelect?: (chatId: string) => void;
     onDelete?: (chatId: string) => void;
-    onChatDeleted?: () => void; // Callback to refresh chat list after deletion
-    onChatUpdated?: () => void; // Callback to refresh chat list after title update
+    onChatTitleUpdate?: (chatId: string, newTitle: string) => void; // Local state update for title changes
+    onChatDeleted?: (chatId: string) => void; // Local state update for deletion
 }
 
-export function ChatHistoryItem({ chat, isSelected, onSelect, onDelete, onChatDeleted, onChatUpdated }: ChatHistoryItemProps) {
+export function ChatHistoryItem({ chat, isSelected, onSelect, onDelete, onChatDeleted, onChatTitleUpdate }: ChatHistoryItemProps) {
     const [isEditing, setIsEditing] = useState(false);
     const [editTitle, setEditTitle] = useState(chat.title);
     const [isLoading, setIsLoading] = useState(false);
@@ -57,9 +57,10 @@ export function ChatHistoryItem({ chat, isSelected, onSelect, onDelete, onChatDe
         try {
             const success = await apiService.updateChat(chat.chat_id, editTitle.trim());
             if (success) {
-                console.log('Chat title updated successfully');
+                // console.log('Chat title updated successfully');
                 setIsEditing(false);
-                onChatUpdated?.();
+                // Update local state immediately without refreshing
+                onChatTitleUpdate?.(chat.chat_id, editTitle.trim());
             } else {
                 alert('Failed to update chat title. Please try again.');
             }
@@ -90,11 +91,11 @@ export function ChatHistoryItem({ chat, isSelected, onSelect, onDelete, onChatDe
         try {
             const success = await apiService.deleteChat(chat.chat_id);
             if (success) {
-                console.log('Chat deleted successfully');
+                // console.log('Chat deleted successfully');
                 // Call the legacy onDelete callback if provided
                 onDelete?.(chat.chat_id);
-                // Call the new callback to refresh the chat list
-                onChatDeleted?.();
+                // Update local state immediately without refreshing
+                onChatDeleted?.(chat.chat_id);
             } else {
                 alert('Failed to delete chat. Please try again.');
             }

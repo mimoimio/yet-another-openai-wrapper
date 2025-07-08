@@ -30,7 +30,7 @@ class PocketBaseService {
 
             // Check if it's the auto-cancellation error
             if (error.status === 0 && retryCount < maxRetries) {
-                console.log(`Retrying authentication in ${retryDelay}ms... (${retryCount + 1}/${maxRetries})`);
+                // console.log(`Retrying authentication in ${retryDelay}ms... (${retryCount + 1}/${maxRetries})`);
 
                 // Wait before retrying
                 await new Promise(resolve => setTimeout(resolve, retryDelay));
@@ -56,7 +56,13 @@ class PocketBaseService {
                 created: record.created,
                 updated: record.updated,
             }));
-        } catch (error) {
+        } catch (error: any) {
+            // Check if this is an auto-cancellation error
+            if (error?.isAbort || error?.code === 20 || error?.originalError?.name === 'AbortError') {
+                // This is an auto-cancellation, which is expected behavior
+                // console.log('Request was auto-cancelled (this is normal when navigating quickly)');
+                return [];
+            }
             console.error('Error fetching chats:', error);
             return [];
         }
@@ -129,7 +135,7 @@ class PocketBaseService {
 
             // Then delete the chat itself
             await this.pb.collection('chats').delete(chatId);
-            console.log(`Chat ${chatId} and ${messages.length} associated messages deleted`);
+            // console.log(`Chat ${chatId} and ${messages.length} associated messages deleted`);
             return true;
         } catch (error) {
             console.error('Error deleting chat:', error);
@@ -153,7 +159,13 @@ class PocketBaseService {
                 created: record.created,
                 updated: record.updated,
             }));
-        } catch (error) {
+        } catch (error: any) {
+            // Check if this is an auto-cancellation error
+            if (error?.isAbort || error?.code === 20 || error?.originalError?.name === 'AbortError') {
+                // This is an auto-cancellation, which is expected behavior
+                // console.log('Request was auto-cancelled (this is normal when navigating quickly)');
+                return [];
+            }
             console.error('Error fetching messages:', error);
             return [];
         }

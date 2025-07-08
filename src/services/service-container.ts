@@ -1,4 +1,4 @@
-import { AIProvider, OpenAIProvider, MockAIProvider } from './ai-providers';
+import { AIProvider, OpenAIProvider, MockAIProvider, GroqProvider } from './ai-providers';
 import { ChatContextManager } from './context-manager';
 
 // Service container for dependency injection
@@ -12,11 +12,16 @@ export class ServiceContainer {
         this.contextManager = new ChatContextManager();
 
         const openaiKey = process.env.OPENAI_API_KEY;
+        const groqKey = process.env.GROQ_API_KEY;
         const aiProviderType = process.env.AI_PROVIDER || 'mock';
 
         if (aiProviderType === 'openai' && openaiKey) {
             console.log('Using OpenAI provider');
             this.aiProvider = new OpenAIProvider(openaiKey);
+        } else if (aiProviderType === 'groq' && groqKey) {
+            console.log('Using Groq provider');
+            // Assuming GroqProvider is implemented similarly to OpenAIProvider
+            this.aiProvider = new GroqProvider(groqKey);
         } else {
             console.log('Using Mock AI provider');
             this.aiProvider = new MockAIProvider();

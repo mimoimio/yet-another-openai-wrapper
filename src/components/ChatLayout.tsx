@@ -4,7 +4,7 @@ import { useState, useEffect, createContext, useContext } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
-import { Chat, ChatHistoryProps } from "@/types/chat";
+import { Chat } from "@/types/chat";
 import apiService from "@/services/api";
 
 // Context for chat data
@@ -14,6 +14,7 @@ interface ChatContextType {
     loading: boolean;
     refreshChats: () => Promise<void>;
     createNewChat: () => Promise<void>;
+    updateChatTitle: (chatId: string, newTitle: string) => void;
 }
 
 const ChatContext = createContext<ChatContextType | null>(null);
@@ -64,12 +65,37 @@ export function ChatLayout({ children }: ChatLayoutProps) {
         }
     };
 
+    const handleChatTitleUpdate = (chatId: string, newTitle: string) => {
+        setChats(prevChats =>
+            prevChats.map(chat =>
+                chat.chat_id === chatId
+                    ? { ...chat, title: newTitle }
+                    : chat
+            )
+        );
+    };
+
+    const handleChatDelete = (chatId: string) => {
+        setChats(prevChats => prevChats.filter(chat => chat.chat_id !== chatId));
+
+        // Only redirect if the currently viewed chat is being deleted
+        if (selectedChatId === chatId) {
+            // Redirect to first remaining chat or home
+            const remainingChats = chats.filter(chat => chat.chat_id !== chatId);
+            if (remainingChats.length > 0) {
+                router.push(`/${remainingChats[0].chat_id}`);
+            } else {
+                router.push('/');
+            }
+        }
+    };
+
     useEffect(() => {
         refreshChats();
     }, []);
 
     const handleChatSelect = (chatId: string) => {
-        console.log('Selecting chat:', chatId);
+        // console.log('Selecting chat:', chatId);
         router.push(`/${chatId}`);
     };
 
@@ -79,6 +105,7 @@ export function ChatLayout({ children }: ChatLayoutProps) {
         loading,
         refreshChats,
         createNewChat,
+        updateChatTitle: handleChatTitleUpdate,
     };
 
     if (loading) {
@@ -97,8 +124,8 @@ export function ChatLayout({ children }: ChatLayoutProps) {
                     selectedChatId={selectedChatId}
                     onChatSelect={handleChatSelect}
                     onNewChat={createNewChat}
-                    onChatDeleted={refreshChats}
-                    onChatUpdated={refreshChats}
+                    onChatDeleted={handleChatDelete}
+                    onChatTitleUpdate={handleChatTitleUpdate}
                 />
                 <div className="flex-1 flex overflow-hidden">
                     <aside className="hidden md:flex w-80 border-r overflow-hidden">
@@ -107,8 +134,8 @@ export function ChatLayout({ children }: ChatLayoutProps) {
                             selectedChatId={selectedChatId}
                             onChatSelect={handleChatSelect}
                             onNewChat={createNewChat}
-                            onChatDeleted={refreshChats}
-                            onChatUpdated={refreshChats}
+                            onChatDeleted={handleChatDelete}
+                            onChatTitleUpdate={handleChatTitleUpdate}
                         />
                     </aside>
                     <main className="flex-1 flex flex-col min-h-0">

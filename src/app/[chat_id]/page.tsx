@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import { ChatDisplay } from "@/components/ChatDisplay";
 import { Message } from "@/types/chat";
@@ -11,25 +11,40 @@ export default function ChatPage() {
     const { chat_id } = useParams();
     const [messages, setMessages] = useState<Message[]>([]);
     const [loading, setLoading] = useState(true);
-    const { refreshChats } = useChatContext();
+    const { refreshChats, updateChatTitle } = useChatContext();
+    const loadingRef = useRef(false);
 
     useEffect(() => {
         if (chat_id) {
             loadMessages();
         }
+        // Reset messages when chat changes
+        return () => {
+            setMessages([]);
+        };
     }, [chat_id]);
 
     const loadMessages = async () => {
         if (!chat_id || typeof chat_id !== 'string') return;
 
+        // Prevent multiple concurrent requests
+        if (loadingRef.current) return;
+
+        loadingRef.current = true;
         setLoading(true);
         try {
             const fetchedMessages = await apiService.getMessages(chat_id);
-            setMessages(fetchedMessages);
+            // Only update state if we're still loading the same chat
+            if (loadingRef.current) {
+                setMessages(fetchedMessages);
+            }
         } catch (error) {
             console.error("Failed to load messages:", error);
         } finally {
-            setLoading(false);
+            if (loadingRef.current) {
+                setLoading(false);
+            }
+            loadingRef.current = false;
         }
     };
 
@@ -40,18 +55,23 @@ export default function ChatPage() {
         const result = await apiService.sendMessage(chat_id, content);
         if (result) {
             setMessages(prev => [...prev, result.userMessage, result.aiMessage]);
-            console.log('Message sent and AI responded');
+
+            // Update chat title if this was the first message
+            if (result.updatedChat) {
+                updateChatTitle(chat_id, result.updatedChat.title);
+            }
+
+            // console.log('Message sent and AI responded');
         }
     };
 
-    const handleReceiveAIMessage = async (content: string) => {
-        // This function is no longer used for simulation
-        // It could be used for manual AI message injection if needed
-        if (!chat_id || typeof chat_id !== 'string') return;
-
-        const aiMessage = await apiService.createMessage(chat_id, 'assistant', content);
-        if (aiMessage) {
-            setMessages(prev => [...prev, aiMessage]);
+    const handleDeleteMessage = async (messageId: string) => {
+        const success = await apiService.deleteMessage(messageId);
+        if (success) {
+            // Remove message from local state immediately
+            setMessages(prev => prev.filter(msg => msg.msg_id !== messageId));
+        } else {
+            alert('Failed to delete message. Please try again.');
         }
     };
 
@@ -75,7 +95,7 @@ export default function ChatPage() {
         <ChatDisplay
             messages={messages}
             onSendMessage={handleSendMessage}
-            onReceiveAIMessage={handleReceiveAIMessage}
+            onDeleteMessage={handleDeleteMessage}
         />
     );
 }

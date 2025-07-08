@@ -11,7 +11,13 @@ class ApiService {
                 throw new Error('Failed to fetch chats');
             }
             return await response.json();
-        } catch (error) {
+        } catch (error: any) {
+            // Check if this is an auto-cancellation or abort error
+            if (error?.name === 'AbortError' || error?.code === 20) {
+                // This is an auto-cancellation, which is expected behavior
+                // console.log('Request was auto-cancelled (this is normal when navigating quickly)');
+                return [];
+            }
             console.error('Error fetching chats:', error);
             return [];
         }
@@ -78,14 +84,20 @@ class ApiService {
                 throw new Error('Failed to fetch messages');
             }
             return await response.json();
-        } catch (error) {
+        } catch (error: any) {
+            // Check if this is an auto-cancellation or abort error
+            if (error?.name === 'AbortError' || error?.code === 20) {
+                // This is an auto-cancellation, which is expected behavior
+                // console.log('Request was auto-cancelled (this is normal when navigating quickly)');
+                return [];
+            }
             console.error('Error fetching messages:', error);
             return [];
         }
     }
 
     async createMessage(chatId: string, role: 'user' | 'assistant' | 'system', content: string): Promise<Message | null> {
-        console.log('createMessage is called');
+        // console.log('createMessage is called');
         try {
             const response = await fetch('/api/messages', {
                 method: 'POST',
@@ -139,7 +151,7 @@ class ApiService {
     }
 
     // Send message and get AI response
-    async sendMessage(chatId: string, content: string): Promise<{ userMessage: Message; aiMessage: Message } | null> {
+    async sendMessage(chatId: string, content: string): Promise<{ userMessage: Message; aiMessage: Message; updatedChat?: Chat } | null> {
         try {
             const response = await fetch(`/api/chats/${chatId}/send`, {
                 method: 'POST',

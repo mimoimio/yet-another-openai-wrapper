@@ -6,19 +6,19 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Send, Bot, User, Copy, ThumbsUp, ThumbsDown } from "lucide-react";
+import { Send, Bot, User, Copy, ThumbsUp, ThumbsDown, Trash2 } from "lucide-react";
 
 import { Message } from "@/types/chat";
 
 interface ChatDisplayProps {
     messages: Message[];
     onSendMessage: (msg: string) => Promise<void>;
-    onReceiveAIMessage: (msg: string) => void;
+    onDeleteMessage?: (messageId: string) => Promise<void>;
 }
 
 import { useState } from "react";
 
-export function ChatDisplay({ messages, onSendMessage, onReceiveAIMessage }: ChatDisplayProps) {
+export function ChatDisplay({ messages, onSendMessage, onDeleteMessage }: ChatDisplayProps) {
     const [inputMessage, setInputMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
@@ -28,6 +28,16 @@ export function ChatDisplay({ messages, onSendMessage, onReceiveAIMessage }: Cha
         await onSendMessage(inputMessage);
         setInputMessage("");
         setIsLoading(false);
+    };
+
+    const handleDeleteMessage = async (messageId: string) => {
+        if (!confirm("Are you sure you want to delete this message?")) {
+            return;
+        }
+
+        if (onDeleteMessage) {
+            await onDeleteMessage(messageId);
+        }
     };
 
     const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -45,7 +55,7 @@ export function ChatDisplay({ messages, onSendMessage, onReceiveAIMessage }: Cha
                     <div className="space-y-6 max-w-3xl mx-auto">
                         {messages.map((message) => (
                             <div key={message.msg_id}
-                                className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}>
+                                className={`flex gap-3 group ${message.role === "user" ? "justify-end" : "justify-start"}`}>
                                 {message.role === "assistant" && (
                                     <Avatar className="h-8 w-8 mt-1">
                                         <AvatarFallback className="bg-primary text-primary-foreground">
@@ -55,35 +65,41 @@ export function ChatDisplay({ messages, onSendMessage, onReceiveAIMessage }: Cha
                                 )}
 
                                 <div className={`flex flex-col gap-2 max-w-[80%] ${message.role === "user" ? "items-end" : "items-start"}`}>
-                                    <Card className={`p-4 ${message.role === "user"
-                                        ? "bg-primary text-primary-foreground ml-12"
-                                        : "bg-muted mr-12"
-                                        }`}>
-                                        <div className="whitespace-pre-wrap text-sm leading-relaxed">
-                                            {message.content}
-                                        </div>
-                                    </Card>
-
-                                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                        {/* <span>
-                                        {message.timestamp.toLocaleTimeString([], {
-                                            hour: '2-digit',
-                                            minute: '2-digit'
-                                        })}
-                                    </span> */}
-                                        {message.role === "assistant" && (
-                                            <div className="flex gap-1">
-                                                <Button variant="ghost" size="icon" className="h-6 w-6">
-                                                    <Copy className="h-3 w-3" />
-                                                </Button>
-                                                <Button variant="ghost" size="icon" className="h-6 w-6">
-                                                    <ThumbsUp className="h-3 w-3" />
-                                                </Button>
-                                                <Button variant="ghost" size="icon" className="h-6 w-6">
-                                                    <ThumbsDown className="h-3 w-3" />
-                                                </Button>
+                                    <div className="relative">
+                                        <Card className={`p-4 ${message.role === "user"
+                                            ? "bg-primary text-primary-foreground ml-12"
+                                            : "bg-muted mr-12"
+                                            }`}>
+                                            <div className="whitespace-pre-wrap text-sm leading-relaxed">
+                                                {message.content}
                                             </div>
-                                        )}
+
+
+                                            {/* <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                                {message.role === "assistant" && (
+                                                    <div className="flex gap-1">
+                                                        <Button variant="ghost" size="icon" className="h-6 w-6">
+                                                            <Copy className="h-3 w-3" />
+                                                        </Button>
+                                                        <Button variant="ghost" size="icon" className="h-6 w-6">
+                                                            <ThumbsUp className="h-3 w-3" />
+                                                        </Button>
+                                                        <Button variant="ghost" size="icon" className="h-6 w-6">
+                                                            <ThumbsDown className="h-3 w-3" />
+                                                        </Button>
+                                                    </div>
+                                                )}
+                                            </div> */}
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className={`absolute top-4 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity ${message.role === "user" ? "-left-0" : "-right-0"
+                                                    }`}
+                                                onClick={() => handleDeleteMessage(message.msg_id)}
+                                            >
+                                                <Trash2 className="h-3 w-3 text-red-500" />
+                                            </Button>
+                                        </Card>
                                     </div>
                                 </div>
 
