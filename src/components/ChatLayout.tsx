@@ -271,7 +271,7 @@ export function ChatLayout({ children }: ChatLayoutProps) {
                     selectedModel={selectedModel}
                 />
                 <div className="flex-1 flex overflow-hidden">
-                    <aside className="hidden md:flex w-80 overflow-hidden">
+                    <aside className="hidden lg:flex w-80 overflow-hidden">
                         <Sidebar
                             chatHistory={chats}
                             selectedChatId={selectedChatId}
