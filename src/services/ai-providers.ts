@@ -1,9 +1,9 @@
 // Abstract interface for AI providers
 export interface AIProvider {
-    generateResponse(context: Array<{ role: string, content: string }>): Promise<string>;
-    generateTitle(firstMessage: string): Promise<string>;
+    generateResponse(context: Array<{ role: string, content: string }>, model: string): Promise<string>;
+    generateTitle(firstMessage: string, model: string): Promise<string>;
 }
-
+const max_tokens = 3000;
 // OpenAI implementation
 export class OpenAIProvider implements AIProvider {
     private apiKey: string;
@@ -12,7 +12,7 @@ export class OpenAIProvider implements AIProvider {
         this.apiKey = apiKey;
     }
 
-    async generateResponse(context: Array<{ role: string, content: string }>): Promise<string> {
+    async generateResponse(context: Array<{ role: string, content: string }>, model: string): Promise<string> {
         try {
             const response = await fetch('https://api.openai.com/v1/chat/completions', {
                 method: 'POST',
@@ -21,9 +21,9 @@ export class OpenAIProvider implements AIProvider {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    model: 'gpt-3.5-turbo',
+                    model: model,
                     messages: context,
-                    max_tokens: 150,
+                    max_tokens: max_tokens,
                     temperature: 0.7
                 })
             });
@@ -40,7 +40,7 @@ export class OpenAIProvider implements AIProvider {
         }
     }
 
-    async generateTitle(firstMessage: string): Promise<string> {
+    async generateTitle(firstMessage: string, model: string): Promise<string> {
         try {
             const response = await fetch('https://api.openai.com/v1/chat/completions', {
                 method: 'POST',
@@ -49,11 +49,11 @@ export class OpenAIProvider implements AIProvider {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    model: 'gpt-3.5-turbo',
+                    model: model,
                     messages: [
                         {
                             role: 'system',
-                            content: 'Generate a short, concise title (maximum 5 words) for a conversation that starts with the following message. Return only the title, no quotes or explanations.'
+                            content: 'Generate a short, concise title (maximum 5 words) for a conversation that starts with the following message. Return only the title of the prompted request of the prompted request, no quotes or explanations.'
                         },
                         {
                             role: 'user',
@@ -87,7 +87,7 @@ export class GroqProvider implements AIProvider {
         this.apiKey = apiKey;
     }
 
-    async generateResponse(context: Array<{ role: string, content: string }>): Promise<string> {
+    async generateResponse(context: Array<{ role: string, content: string }>, model: string): Promise<string> {
         try {
             const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                 method: 'POST',
@@ -96,9 +96,9 @@ export class GroqProvider implements AIProvider {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    model: 'deepseek-r1-distill-llama-70b',
+                    model: model,
                     messages: context,
-                    max_tokens: 750,
+                    max_tokens: max_tokens,
                 })
             });
 
@@ -108,7 +108,7 @@ export class GroqProvider implements AIProvider {
 
             const data = await response.json();
 
-            console.log('contexts:', context);
+            // console.log('contexts:', context);
             // check input tokens count
             if (data.usage && data.usage.prompt_tokens) {
                 console.warn(`GROQ API prompt tokens: ${data.usage.prompt_tokens}`);
@@ -127,7 +127,7 @@ export class GroqProvider implements AIProvider {
         }
     }
 
-    async generateTitle(firstMessage: string): Promise<string> {
+    async generateTitle(firstMessage: string, model: string): Promise<string> {
         try {
             const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                 method: 'POST',
@@ -136,11 +136,11 @@ export class GroqProvider implements AIProvider {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    model: 'llama-3.1-8b-instant',
+                    model: model,
                     messages: [
                         {
                             role: 'system',
-                            content: 'Generate a short, concise title (maximum 5 words) for a conversation that starts with the following message. Return only the title, no quotes or explanations.'
+                            content: 'Generate a short, concise title (maximum 5 words) for a conversation that starts with the following message. Return only the title of the prompted request, no quotes or explanations.'
                         },
                         {
                             role: 'user',
@@ -178,13 +178,14 @@ export class MockAIProvider implements AIProvider {
         "Let me provide you with some insights on that topic...",
     ];
 
-    async generateResponse(context: Array<{ role: string, content: string }>): Promise<string> {
+    async generateResponse(context: Array<{ role: string, content: string }>, model: string): Promise<string> {
         // Simulate API delay
         await new Promise(resolve => setTimeout(resolve, 200 + Math.random() * 200));
 
         // Simple context awareness - respond differently based on recent messages
         const userMessage = context[context.length - 1]?.content.toLowerCase() || '';
 
+        console.log(model)
         if (userMessage.includes('hello') || userMessage.includes('hi')) {
             return "Hello! How can I assist you today?";
         }
@@ -198,8 +199,9 @@ export class MockAIProvider implements AIProvider {
         return this.responses[randomIndex];
     }
 
-    async generateTitle(firstMessage: string): Promise<string> {
+    async generateTitle(firstMessage: string, model: string): Promise<string> {
         // Simple mock title generation logic
+        console.log(model)
         const words = firstMessage.split(' ').slice(0, 5);
         return words.join(' ') + (words.length === 5 ? '...' : '');
     }

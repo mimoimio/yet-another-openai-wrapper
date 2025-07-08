@@ -8,10 +8,10 @@ export default function Home() {
   const { createNewChat, chats } = useChatContext();
 
   return (
-    <div className="flex-1 flex items-center justify-center">
+    <div className="flex-1 flex items-center justify-center bg-linear-30 from-background to to-foreground/80">
       <div className="text-center max-w-md">
         <MessageCircle className="h-16 w-16 mx-auto mb-6 text-muted-foreground" />
-        <h1 className="text-3xl font-semibold mb-4">Welcome to AI Chat</h1>
+        <h1 className="text-3xl font-semibold mb-4">Welcome to MimoAi Chat</h1>
         <p className="text-muted-foreground mb-8">
           {chats.length === 0
             ? "Start your first conversation with AI"

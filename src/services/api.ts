@@ -167,14 +167,14 @@ class ApiService {
     }
 
     // Send message and get AI response
-    async sendMessage(chatId: string, content: string): Promise<{ userMessage: Message; aiMessage: Message; updatedChat?: Chat } | null> {
+    async sendMessage(chatId: string, content: string, model: { name: string, provider: string }): Promise<{ userMessage: Message; aiMessage: Message; updatedChat?: Chat } | null> {
         try {
             const response = await fetch(`/api/chats/${chatId}/send`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ content }),
+                body: JSON.stringify({ content, model }),
             });
             if (!response.ok) {
                 throw new Error('Failed to send message');
@@ -183,6 +183,19 @@ class ApiService {
         } catch (error) {
             console.error('Error sending message:', error);
             return null;
+        }
+    }
+
+    async getModels(): Promise<{ name: string, provider: string }[]> {
+        try {
+            const response = await fetch('/api/models');
+            if (!response.ok) {
+                throw new Error('Failed to fetch models');
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching models:', error);
+            return [];
         }
     }
 }

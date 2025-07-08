@@ -12,20 +12,22 @@ import { Message } from "@/types/chat";
 
 interface ChatDisplayProps {
     messages: Message[];
-    onSendMessage: (msg: string) => Promise<void>;
+    onSendMessage: (msg: string, model: { name: string, provider: string }) => Promise<void>;
     onDeleteMessage?: (messageId: string) => Promise<void>;
+    selectedModel: { name: string, provider: string };
 }
 
 import { useState } from "react";
+import MarkdownViewer from "./MarkdownViewer";
 
-export function ChatDisplay({ messages, onSendMessage, onDeleteMessage }: ChatDisplayProps) {
+export function ChatDisplay({ messages, onSendMessage, onDeleteMessage, selectedModel }: ChatDisplayProps) {
     const [inputMessage, setInputMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSendMessage = async () => {
         if (!inputMessage.trim()) return;
         setIsLoading(true);
-        await onSendMessage(inputMessage);
+        await onSendMessage(inputMessage, selectedModel);
         setInputMessage("");
         setIsLoading(false);
     };
@@ -48,11 +50,11 @@ export function ChatDisplay({ messages, onSendMessage, onDeleteMessage }: ChatDi
     };
 
     return (
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col relative h-full bg-background/90">
             {/* Chat Messages */}
             <ScrollArea className="flex-1 min-h-0">
                 <div className="p-4">
-                    <div className="space-y-6 max-w-3xl mx-auto">
+                    <div className="space-y-6 container max-w-[80dvw] mx-auto">
                         {messages.map((message) => (
                             <div key={message.msg_id}
                                 className={`flex gap-3 group ${message.role === "user" ? "justify-end" : "justify-start"}`}>
@@ -66,13 +68,12 @@ export function ChatDisplay({ messages, onSendMessage, onDeleteMessage }: ChatDi
 
                                 <div className={`flex flex-col gap-2 max-w-[80%] ${message.role === "user" ? "items-end" : "items-start"}`}>
                                     <div className="relative">
-                                        <Card className={`p-4 ${message.role === "user"
-                                            ? "bg-primary text-primary-foreground ml-12"
-                                            : "bg-muted mr-12"
-                                            }`}>
-                                            <div className="whitespace-pre-wrap text-sm leading-relaxed">
-                                                {message.content}
-                                            </div>
+                                        <Card className={`p-4 ${message.role === "user" ? "bg-foreground/50 ml-12" : "bg-muted/50 mr-12"}`}>
+                                            <article className={`prose dark:prose-invert ${message.role === "user" ? "text-background" : ""}`}>
+                                                <MarkdownViewer source={message.content} />
+                                                {/* <div className="whitespace-pre-wrap text-sm leading-relaxed">
+                                                </div> */}
+                                            </article>
 
 
                                             {/* <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -137,7 +138,7 @@ export function ChatDisplay({ messages, onSendMessage, onDeleteMessage }: ChatDi
             </ScrollArea>
 
             {/* Message Input */}
-            <div className="border-t p-4">
+            <div className="border-t p-4 bg-background">
                 <div className="max-w-3xl mx-auto">
                     <div className="flex gap-2">
                         <Input

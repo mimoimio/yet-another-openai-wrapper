@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Plus, Settings, Bot, History } from "lucide-react";
+import { Plus, Bot, History } from "lucide-react";
 import { ChatHistoryItem } from "@/components/ChatHistoryItem";
 import { Chat } from "@/types/chat";
 
@@ -18,7 +18,7 @@ interface SidebarProps {
 
 export function Sidebar({ chatHistory, selectedChatId, onChatSelect, onNewChat, onChatDeleted, onChatTitleUpdate }: SidebarProps) {
     return (
-        <div className="flex flex-col h-full w-full bg-background border-r">
+        <div className="flex flex-col h-full w-full bg-background">
             {/* Header */}
             <div className="p-4">
                 <Button
@@ -71,7 +71,7 @@ export function Sidebar({ chatHistory, selectedChatId, onChatSelect, onNewChat, 
 
             {/* Footer */}
             <div className="p-4 space-y-2">
-                <Button
+                {/* <Button
                     variant="ghost"
                     className="w-full justify-start gap-2"
                     size="sm"
@@ -79,10 +79,10 @@ export function Sidebar({ chatHistory, selectedChatId, onChatSelect, onNewChat, 
                 >
                     <Settings className="h-4 w-4" />
                     Settings
-                </Button>
+                </Button> */}
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <Bot className="h-3 w-3" />
-                    <span>AI Assistant Ready</span>
+                    <span>🥴😭🥳😂✌️😾</span>
                 </div>
             </div>
         </div>

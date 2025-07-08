@@ -107,10 +107,10 @@ export function ChatHistoryItem({ chat, isSelected, onSelect, onDelete, onChatDe
 
     return (
         <Card
-            className={"p-3 cursor-pointer hover:bg-blue-200 transition-colors group" + (isSelected ? " bg-blue-100" : "")}
+            className={"p-3 cursor-pointer hover:bg-pink-600 transition-colors group" + (isSelected ? " bg-pink-500" : "")}
             onClick={handleSelect}
         >
-            <div className="flex items-start justify-between">
+            <div className="flex items-start justify-between ">
                 <div className="flex-1 min-w-0">
                     {isEditing ? (
                         <div className="space-y-2">
@@ -129,10 +129,10 @@ export function ChatHistoryItem({ chat, isSelected, onSelect, onDelete, onChatDe
                         </div>
                     ) : (
                         <>
-                            <h3 className="text-sm font-medium truncate mb-1">
+                            <h3 className="text-sm font-medium truncate mb-1 w-[200px]">
                                 {chat.title}
                             </h3>
-                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground ">
                                 <span>{chat.created ? new Date(chat.created).toLocaleDateString() : "Today"}</span>
                             </div>
                         </>
@@ -163,10 +163,11 @@ export function ChatHistoryItem({ chat, isSelected, onSelect, onDelete, onChatDe
                         </>
                     ) : (
                         <>
+                            {/* opacity-0 group-hover:opacity-100  */}
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                                className="h-6 w-6 transition-opacity"
                                 onClick={handleEditStart}
                             >
                                 <Edit2 className="h-3 w-3" />
@@ -174,7 +175,7 @@ export function ChatHistoryItem({ chat, isSelected, onSelect, onDelete, onChatDe
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                                className="h-6 w-6 transition-opacity"
                                 onClick={handleDelete}
                             >
                                 <Trash2 className="h-3 w-3" />
