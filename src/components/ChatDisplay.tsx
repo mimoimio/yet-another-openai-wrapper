@@ -50,11 +50,11 @@ export function ChatDisplay({ messages, onSendMessage, onDeleteMessage, selected
     };
 
     return (
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col relative h-full bg-background/90">
             {/* Chat Messages */}
             <ScrollArea className="flex-1 min-h-0">
                 <div className="p-4">
-                    <div className="space-y-6 max-w-3xl mx-auto">
+                    <div className="space-y-6 max-w-6xl mx-auto">
                         {messages.map((message) => (
                             <div key={message.msg_id}
                                 className={`flex gap-3 group ${message.role === "user" ? "justify-end" : "justify-start"}`}>
@@ -68,11 +68,8 @@ export function ChatDisplay({ messages, onSendMessage, onDeleteMessage, selected
 
                                 <div className={`flex flex-col gap-2 max-w-[80%] ${message.role === "user" ? "items-end" : "items-start"}`}>
                                     <div className="relative">
-                                        <Card className={`p-4 ${message.role === "user"
-                                            ? "bg-foreground/5 text-primary-foreground ml-12"
-                                            : "bg-muted mr-12"
-                                            }`}>
-                                            <article className="prose dark:prose-invert text-foreground">
+                                        <Card className={`p-4 ${message.role === "user" ? "bg-foreground/50 ml-12" : "bg-muted/50 mr-12"}`}>
+                                            <article className={`prose dark:prose-invert ${message.role === "user" ? "text-background" : ""}`}>
                                                 <MarkdownViewer source={message.content} />
                                                 {/* <div className="whitespace-pre-wrap text-sm leading-relaxed">
                                                 </div> */}
@@ -141,7 +138,7 @@ export function ChatDisplay({ messages, onSendMessage, onDeleteMessage, selected
             </ScrollArea>
 
             {/* Message Input */}
-            <div className="border-t p-4">
+            <div className="border-t p-4 bg-background">
                 <div className="max-w-3xl mx-auto">
                     <div className="flex gap-2">
                         <Input

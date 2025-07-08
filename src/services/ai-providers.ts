@@ -108,7 +108,7 @@ export class GroqProvider implements AIProvider {
 
             const data = await response.json();
 
-            console.log('contexts:', context);
+            // console.log('contexts:', context);
             // check input tokens count
             if (data.usage && data.usage.prompt_tokens) {
                 console.warn(`GROQ API prompt tokens: ${data.usage.prompt_tokens}`);

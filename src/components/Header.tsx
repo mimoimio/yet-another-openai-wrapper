@@ -1,9 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
-import { Menu, MessageCircle, Settings, User } from "lucide-react";
+import { Menu, MessageCircle } from "lucide-react";
 
 import { Sidebar } from "@/components/Sidebar";
 
@@ -41,7 +40,7 @@ export function Header({ chatHistory, selectedChatId, onChatSelect, onNewChat, o
 
 
     return (
-        <header className="flex items-center justify-between p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <header className="flex items-center justify-between p-4 border-b bg-background/90 backdrop-blur">
             {/* Left side - Mobile menu and title */}
             <div className="flex items-center gap-4">
                 {/* Mobile sidebar trigger */}
@@ -93,7 +92,7 @@ export function Header({ chatHistory, selectedChatId, onChatSelect, onNewChat, o
 
 
 
-                <Button variant="ghost" size="icon">
+                {/* <Button variant="ghost" size="icon">
                     <Settings className="h-5 w-5" />
                 </Button>
                 <Avatar className="h-8 w-8">
@@ -101,7 +100,7 @@ export function Header({ chatHistory, selectedChatId, onChatSelect, onNewChat, o
                     <AvatarFallback>
                         <User className="h-4 w-4" />
                     </AvatarFallback>
-                </Avatar>
+                </Avatar> */}
             </div>
         </header>
     );
