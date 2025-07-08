@@ -11,6 +11,7 @@ import apiService from "@/services/api";
 interface ChatContextType {
     chats: Chat[];
     selectedChatId: string | null;
+    selectedModel: { name: string, provider: string }; // Model selection state
     loading: boolean;
     refreshChats: () => Promise<void>;
     createNewChat: () => Promise<void>;
@@ -33,10 +34,10 @@ interface ChatLayoutProps {
 
 export function ChatLayout({ children }: ChatLayoutProps) {
     const [chats, setChats] = useState<Chat[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const router = useRouter();
     const pathname = usePathname();
-
+    const [selectedModel, setSelectedModel] = useState<{ name: string, provider: string }>({ name: "gpt-4.1", provider: "openai" }); // Default model, can be changed later
     // Extract chat_id from pathname
     const selectedChatId = pathname === "/" ? null : pathname.split("/")[1];
 
@@ -90,8 +91,37 @@ export function ChatLayout({ children }: ChatLayoutProps) {
         }
     };
 
+    const handleModelSelect = (modelSelection: { name: string, provider: string }) => {
+        // Handle model selection logic here
+        setSelectedModel(modelSelection)
+        // You can also pass this to a context or state if needed
+    };
+
+    // useEffect(() => {
+    //     refreshChats();
+    // }, []);
     useEffect(() => {
-        refreshChats();
+        async function fetchChats() {
+            setLoading(true);
+            try {
+                const fetchedChats = await apiService.getChats();
+                setChats(fetchedChats);
+            } catch (error) {
+                console.error("Failed to load chats:", error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        async function fetchModels() {
+            try {
+                const models = await apiService.getModels();
+                setSelectedModel(models[0]); // Set default model to first available
+            } catch (error) {
+                console.error("Failed to load models:", error);
+            }
+        }
+        fetchModels();
+        fetchChats();
     }, []);
 
     const handleChatSelect = (chatId: string) => {
@@ -103,6 +133,7 @@ export function ChatLayout({ children }: ChatLayoutProps) {
         chats,
         selectedChatId,
         loading,
+        selectedModel,
         refreshChats,
         createNewChat,
         updateChatTitle: handleChatTitleUpdate,
@@ -126,6 +157,8 @@ export function ChatLayout({ children }: ChatLayoutProps) {
                     onNewChat={createNewChat}
                     onChatDeleted={handleChatDelete}
                     onChatTitleUpdate={handleChatTitleUpdate}
+                    onModelSelect={handleModelSelect}
+                    selectedModel={selectedModel}
                 />
                 <div className="flex-1 flex overflow-hidden">
                     <aside className="hidden md:flex w-80 border-r overflow-hidden">

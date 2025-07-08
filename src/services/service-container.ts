@@ -6,22 +6,22 @@ export class ServiceContainer {
     private static instance: ServiceContainer;
     private aiProvider: AIProvider;
     private contextManager: ChatContextManager;
+    private openaiKey = process.env.OPENAI_API_KEY;
+    private groqKey = process.env.GROQ_API_KEY;
 
     private constructor() {
         // Initialize based on environment and available API keys
         this.contextManager = new ChatContextManager();
 
-        const openaiKey = process.env.OPENAI_API_KEY;
-        const groqKey = process.env.GROQ_API_KEY;
         const aiProviderType = process.env.AI_PROVIDER || 'mock';
 
-        if (aiProviderType === 'openai' && openaiKey) {
+        if (aiProviderType === 'openai' && this.openaiKey) {
             console.log('Using OpenAI provider');
-            this.aiProvider = new OpenAIProvider(openaiKey);
-        } else if (aiProviderType === 'groq' && groqKey) {
+            this.aiProvider = new OpenAIProvider(this.openaiKey);
+        } else if (aiProviderType === 'groq' && this.groqKey) {
             console.log('Using Groq provider');
             // Assuming GroqProvider is implemented similarly to OpenAIProvider
-            this.aiProvider = new GroqProvider(groqKey);
+            this.aiProvider = new GroqProvider(this.groqKey);
         } else {
             console.log('Using Mock AI provider');
             this.aiProvider = new MockAIProvider();
@@ -44,8 +44,18 @@ export class ServiceContainer {
     }
 
     // Method to switch providers (useful for testing)
-    setAIProvider(provider: AIProvider): void {
-        this.aiProvider = provider;
+    setAIProvider(providerName: string): void {
+        if (providerName === 'openai' && this.openaiKey) {
+            console.log('Using OpenAI provider');
+            this.aiProvider = new OpenAIProvider(this.openaiKey);
+        } else if (providerName === 'groq' && this.groqKey) {
+            console.log('Using Groq provider');
+            // Assuming GroqProvider is implemented similarly to OpenAIProvider
+            this.aiProvider = new GroqProvider(this.groqKey);
+        } else {
+            console.log('Using Mock AI provider');
+            this.aiProvider = new MockAIProvider();
+        }
         console.log('AI provider switched');
     }
 

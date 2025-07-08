@@ -11,7 +11,7 @@ export default function ChatPage() {
     const { chat_id } = useParams();
     const [messages, setMessages] = useState<Message[]>([]);
     const [loading, setLoading] = useState(true);
-    const { updateChatTitle } = useChatContext();
+    const { updateChatTitle, selectedModel } = useChatContext();
     // const { refreshChats, updateChatTitle } = useChatContext();
     const loadingRef = useRef(false);
 
@@ -49,11 +49,11 @@ export default function ChatPage() {
         }
     };
 
-    const handleSendMessage = async (content: string) => {
+    const handleSendMessage = async (content: string, model: { name: string, provider: string }) => {
         if (!chat_id || typeof chat_id !== 'string') return;
 
         // Send message and get AI response from API
-        const result = await apiService.sendMessage(chat_id, content);
+        const result = await apiService.sendMessage(chat_id, content, model);
         if (result) {
             setMessages(prev => [...prev, result.userMessage, result.aiMessage]);
 
@@ -97,6 +97,7 @@ export default function ChatPage() {
             messages={messages}
             onSendMessage={handleSendMessage}
             onDeleteMessage={handleDeleteMessage}
+            selectedModel={selectedModel}
         />
     );
 }

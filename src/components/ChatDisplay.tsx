@@ -12,21 +12,22 @@ import { Message } from "@/types/chat";
 
 interface ChatDisplayProps {
     messages: Message[];
-    onSendMessage: (msg: string) => Promise<void>;
+    onSendMessage: (msg: string, model: { name: string, provider: string }) => Promise<void>;
     onDeleteMessage?: (messageId: string) => Promise<void>;
+    selectedModel: { name: string, provider: string };
 }
 
 import { useState } from "react";
 import MarkdownViewer from "./MarkdownViewer";
 
-export function ChatDisplay({ messages, onSendMessage, onDeleteMessage }: ChatDisplayProps) {
+export function ChatDisplay({ messages, onSendMessage, onDeleteMessage, selectedModel }: ChatDisplayProps) {
     const [inputMessage, setInputMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSendMessage = async () => {
         if (!inputMessage.trim()) return;
         setIsLoading(true);
-        await onSendMessage(inputMessage);
+        await onSendMessage(inputMessage, selectedModel);
         setInputMessage("");
         setIsLoading(false);
     };

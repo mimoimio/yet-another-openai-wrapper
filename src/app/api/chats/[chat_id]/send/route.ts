@@ -7,12 +7,15 @@ export async function POST(
     { params }: { params: Promise<{ chat_id: string }> }
 ) {
     try {
-        const { content } = await request.json();
+        const { content, model } = await request.json();
+        // model { name: string, provider: string }
         const { chat_id } = await params;
         const chatId = chat_id;
 
         // Get services from container
         const container = ServiceContainer.getInstance();
+        container.setAIProvider(model.provider)
+
         const aiProvider = container.getAIProvider();
         const contextManager = container.getContextManager();
 
@@ -35,9 +38,9 @@ export async function POST(
         const context = await contextManager.buildContext(chatId);
 
         // Generate AI response and title concurrently if this is the first message
-        const promises = [aiProvider.generateResponse(context)];
+        const promises = [aiProvider.generateResponse(context, model.name)];
         if (isFirstUserMessage) {
-            promises.push(aiProvider.generateTitle(content));
+            promises.push(aiProvider.generateTitle(content, model.name));
         }
 
         const results = await Promise.all(promises);

@@ -11,7 +11,7 @@ export default function Home() {
     <div className="flex-1 flex items-center justify-center">
       <div className="text-center max-w-md">
         <MessageCircle className="h-16 w-16 mx-auto mb-6 text-muted-foreground" />
-        <h1 className="text-3xl font-semibold mb-4">Welcome to AI Chat</h1>
+        <h1 className="text-3xl font-semibold mb-4">Welcome to MimoAi Chat</h1>
         <p className="text-muted-foreground mb-8">
           {chats.length === 0
             ? "Start your first conversation with AI"
