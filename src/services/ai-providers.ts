@@ -21,7 +21,7 @@ export class OpenAIProvider implements AIProvider {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    model: 'gpt-3.5-turbo',
+                    model: model,
                     messages: context,
                     max_tokens: max_tokens,
                     temperature: 0.7
@@ -49,7 +49,7 @@ export class OpenAIProvider implements AIProvider {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    model: 'gpt-3.5-turbo',
+                    model: model,
                     messages: [
                         {
                             role: 'system',
@@ -96,7 +96,7 @@ export class GroqProvider implements AIProvider {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    model: 'deepseek-r1-distill-llama-70b',
+                    model: model,
                     messages: context,
                     max_tokens: max_tokens,
                 })
@@ -136,7 +136,7 @@ export class GroqProvider implements AIProvider {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    model: 'llama-3.1-8b-instant',
+                    model: model,
                     messages: [
                         {
                             role: 'system',
@@ -185,6 +185,7 @@ export class MockAIProvider implements AIProvider {
         // Simple context awareness - respond differently based on recent messages
         const userMessage = context[context.length - 1]?.content.toLowerCase() || '';
 
+        console.log(model)
         if (userMessage.includes('hello') || userMessage.includes('hi')) {
             return "Hello! How can I assist you today?";
         }
@@ -200,6 +201,7 @@ export class MockAIProvider implements AIProvider {
 
     async generateTitle(firstMessage: string, model: string): Promise<string> {
         // Simple mock title generation logic
+        console.log(model)
         const words = firstMessage.split(' ').slice(0, 5);
         return words.join(' ') + (words.length === 5 ? '...' : '');
     }
