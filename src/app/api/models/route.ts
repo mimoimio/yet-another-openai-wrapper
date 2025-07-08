@@ -14,7 +14,6 @@ export async function GET() {
             { name: "llama-3.3-70b-versatile", provider: "groq" },
             { name: "meta-llama/llama-guard-4-12b", provider: "groq" },
             { name: "deepseek-r1-distill-llama-70b", provider: "groq" },
-            { name: "playai-tts", provider: "groq" },
             { name: "qwen/qwen3-32b", provider: "groq" },
             { name: "mistral-saba-24b", provider: "groq" },
             { name: "meta-llama/llama-prompt-guard-2-86m", provider: "groq" },
