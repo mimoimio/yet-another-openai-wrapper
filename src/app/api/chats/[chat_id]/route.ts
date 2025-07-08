@@ -9,7 +9,7 @@ export async function DELETE(
         const { chat_id } = await params;
         await pocketbaseService.deleteChat(chat_id);
         return NextResponse.json({ success: true });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Failed to delete chat:', error);
         return NextResponse.json(
             { error: 'Failed to delete chat' },
@@ -27,7 +27,7 @@ export async function PUT(
         const { chat_id } = await params;
         const chat = await pocketbaseService.updateChat(chat_id, title);
         return NextResponse.json(chat);
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Failed to update chat:', error);
         return NextResponse.json(
             { error: 'Failed to update chat' },

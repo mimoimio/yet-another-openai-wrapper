@@ -1,5 +1,15 @@
 import { Chat, Message } from '@/types/chat';
 
+// Type guard for errors with code property
+function hasErrorCode(error: unknown): error is { code: number } {
+    return error !== null && typeof error === 'object' && 'code' in error;
+}
+
+// Type guard for errors with name property  
+function hasErrorName(error: unknown): error is { name: string } {
+    return error !== null && typeof error === 'object' && 'name' in error;
+}
+
 class ApiService {
     private baseUrl = '';
 
@@ -11,9 +21,12 @@ class ApiService {
                 throw new Error('Failed to fetch chats');
             }
             return await response.json();
-        } catch (error: any) {
+        } catch (error: unknown) {
             // Check if this is an auto-cancellation or abort error
-            if (error?.name === 'AbortError' || error?.code === 20) {
+            const isAbortError = hasErrorName(error) && error.name === 'AbortError';
+            const isPocketBaseAutoCancel = hasErrorCode(error) && error.code === 20;
+
+            if (isAbortError || isPocketBaseAutoCancel) {
                 // This is an auto-cancellation, which is expected behavior
                 // console.log('Request was auto-cancelled (this is normal when navigating quickly)');
                 return [];
@@ -84,9 +97,12 @@ class ApiService {
                 throw new Error('Failed to fetch messages');
             }
             return await response.json();
-        } catch (error: any) {
+        } catch (error: unknown) {
             // Check if this is an auto-cancellation or abort error
-            if (error?.name === 'AbortError' || error?.code === 20) {
+            const isAbortError = hasErrorName(error) && error.name === 'AbortError';
+            const isPocketBaseAutoCancel = hasErrorCode(error) && error.code === 20;
+
+            if (isAbortError || isPocketBaseAutoCancel) {
                 // This is an auto-cancellation, which is expected behavior
                 // console.log('Request was auto-cancelled (this is normal when navigating quickly)');
                 return [];

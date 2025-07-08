@@ -34,14 +34,8 @@ export function ChatHistoryItem({ chat, isSelected, onSelect, onDelete, onChatDe
         setEditTitle(chat.title);
     };
 
-    const handleEditCancel = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        setIsEditing(false);
-        setEditTitle(chat.title);
-    };
-
-    const handleEditSave = async (e: React.MouseEvent) => {
-        e.stopPropagation();
+    const handleEditSave = async (e?: React.MouseEvent) => {
+        e?.stopPropagation();
 
         if (editTitle.trim() === chat.title.trim()) {
             setIsEditing(false);
@@ -72,11 +66,17 @@ export function ChatHistoryItem({ chat, isSelected, onSelect, onDelete, onChatDe
         }
     };
 
+    const handleEditCancel = (e?: React.MouseEvent) => {
+        e?.stopPropagation();
+        setIsEditing(false);
+        setEditTitle(chat.title);
+    };
+
     const handleKeyPress = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
-            handleEditSave(e as any);
+            handleEditSave();
         } else if (e.key === 'Escape') {
-            handleEditCancel(e as any);
+            handleEditCancel();
         }
     };
 

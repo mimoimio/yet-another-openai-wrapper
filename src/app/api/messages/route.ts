@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
         const messages = await pocketbaseService.getMessages(chatId);
         return NextResponse.json(messages);
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Failed to fetch messages:', error);
         return NextResponse.json(
             { error: 'Failed to fetch messages' },
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
         const { chat_id, role, content } = await request.json();
         const message = await pocketbaseService.createMessage(chat_id, role, content);
         return NextResponse.json(message);
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Failed to create message:', error);
         return NextResponse.json(
             { error: 'Failed to create message' },

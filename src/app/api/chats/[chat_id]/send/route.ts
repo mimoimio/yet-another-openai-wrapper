@@ -73,10 +73,10 @@ export async function POST(
             aiMessage,
             updatedChat
         });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Failed to send message:', error);
         return NextResponse.json(
-            { error: 'Failed to send message', details: error.message },
+            { error: 'Failed to send message', details: error instanceof Error ? error.message : 'Unknown error' },
             { status: 500 }
         );
     }

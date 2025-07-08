@@ -9,7 +9,7 @@ export async function DELETE(
         const { msg_id } = await params;
         await pocketbaseService.deleteMessage(msg_id);
         return NextResponse.json({ success: true });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Failed to delete message:', error);
         return NextResponse.json(
             { error: 'Failed to delete message' },
@@ -27,7 +27,7 @@ export async function PUT(
         const { msg_id } = await params;
         const message = await pocketbaseService.updateMessage(msg_id, content);
         return NextResponse.json(message);
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Failed to update message:', error);
         return NextResponse.json(
             { error: 'Failed to update message' },

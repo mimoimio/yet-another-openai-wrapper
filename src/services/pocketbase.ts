@@ -1,5 +1,35 @@
-import PocketBase from 'pocketbase';
+import PocketBase, { RecordSubscription } from 'pocketbase';
 import { Chat, Message } from '@/types/chat';
+
+// Type for PocketBase errors
+interface PocketBaseError {
+    status?: number;
+    isAbort?: boolean;
+    code?: number;
+    originalError?: { name?: string };
+}
+
+// Type for PocketBase record structures
+interface PocketBaseMessage {
+    id: string;
+    chat_id: string;
+    role: string;
+    content: string;
+    created: string;
+    updated: string;
+}
+
+interface PocketBaseChat {
+    id: string;
+    title: string;
+    created: string;
+    updated: string;
+}
+
+// Type guard for PocketBase errors
+function isPocketBaseError(error: unknown): error is PocketBaseError {
+    return error !== null && typeof error === 'object';
+}
 
 class PocketBaseService {
     private pb: PocketBase;
@@ -18,18 +48,18 @@ class PocketBaseService {
         const retryDelay = 200; // 1 second
 
         try {
-            const authData = await this.pb.collection('_superusers').authWithPassword(
+            await this.pb.collection('_superusers').authWithPassword(
                 process.env.POCKETBASE_EMAIL || 'jafflewaffle@gmail.com',
                 process.env.POCKETBASE_PASSWORD || 'thisisnotmyrealpassword'
             );
             this.isAuthenticated = true;
             // console.log('PocketBase authenticated:', authData);
             return true;
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error(`PocketBase authentication failed (attempt ${retryCount + 1}):`, error);
 
             // Check if it's the auto-cancellation error
-            if (error.status === 0 && retryCount < maxRetries) {
+            if (isPocketBaseError(error) && error.status === 0 && retryCount < maxRetries) {
                 // console.log(`Retrying authentication in ${retryDelay}ms... (${retryCount + 1}/${maxRetries})`);
 
                 // Wait before retrying
@@ -56,9 +86,10 @@ class PocketBaseService {
                 created: record.created,
                 updated: record.updated,
             }));
-        } catch (error: any) {
+        } catch (error: unknown) {
             // Check if this is an auto-cancellation error
-            if (error?.isAbort || error?.code === 20 || error?.originalError?.name === 'AbortError') {
+            if (isPocketBaseError(error) &&
+                (error.isAbort || error.code === 20 || error.originalError?.name === 'AbortError')) {
                 // This is an auto-cancellation, which is expected behavior
                 // console.log('Request was auto-cancelled (this is normal when navigating quickly)');
                 return [];
@@ -159,9 +190,10 @@ class PocketBaseService {
                 created: record.created,
                 updated: record.updated,
             }));
-        } catch (error: any) {
+        } catch (error: unknown) {
             // Check if this is an auto-cancellation error
-            if (error?.isAbort || error?.code === 20 || error?.originalError?.name === 'AbortError') {
+            if (isPocketBaseError(error) &&
+                (error.isAbort || error.code === 20 || error.originalError?.name === 'AbortError')) {
                 // This is an auto-cancellation, which is expected behavior
                 // console.log('Request was auto-cancelled (this is normal when navigating quickly)');
                 return [];
@@ -251,17 +283,17 @@ class PocketBaseService {
     }
 
     // Real-time subscriptions
-    async subscribeToChat(chatId: string, callback: (data: any) => void) {
+    async subscribeToChat(chatId: string, callback: (data: RecordSubscription<PocketBaseMessage>) => void) {
         await this.authenticate();
         return this.pb.collection('messages').subscribe(`chat_id = "${chatId}"`, callback);
     }
 
-    async subscribeToChats(callback: (data: any) => void) {
+    async subscribeToChats(callback: (data: RecordSubscription<PocketBaseChat>) => void) {
         await this.authenticate();
         return this.pb.collection('chats').subscribe('*', callback);
     }
 
-    unsubscribe(subscription?: any) {
+    unsubscribe(subscription?: string) {
         if (subscription) {
             this.pb.collection('messages').unsubscribe(subscription);
         }

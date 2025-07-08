@@ -11,7 +11,8 @@ export default function ChatPage() {
     const { chat_id } = useParams();
     const [messages, setMessages] = useState<Message[]>([]);
     const [loading, setLoading] = useState(true);
-    const { refreshChats, updateChatTitle } = useChatContext();
+    const { updateChatTitle } = useChatContext();
+    // const { refreshChats, updateChatTitle } = useChatContext();
     const loadingRef = useRef(false);
 
     useEffect(() => {
