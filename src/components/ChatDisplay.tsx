@@ -17,6 +17,7 @@ interface ChatDisplayProps {
 }
 
 import { useState } from "react";
+import MarkdownViewer from "./MarkdownViewer";
 
 export function ChatDisplay({ messages, onSendMessage, onDeleteMessage }: ChatDisplayProps) {
     const [inputMessage, setInputMessage] = useState("");
@@ -67,12 +68,14 @@ export function ChatDisplay({ messages, onSendMessage, onDeleteMessage }: ChatDi
                                 <div className={`flex flex-col gap-2 max-w-[80%] ${message.role === "user" ? "items-end" : "items-start"}`}>
                                     <div className="relative">
                                         <Card className={`p-4 ${message.role === "user"
-                                            ? "bg-primary text-primary-foreground ml-12"
+                                            ? "bg-foreground/5 text-primary-foreground ml-12"
                                             : "bg-muted mr-12"
                                             }`}>
-                                            <div className="whitespace-pre-wrap text-sm leading-relaxed">
-                                                {message.content}
-                                            </div>
+                                            <article className="prose dark:prose-invert text-foreground">
+                                                <MarkdownViewer source={message.content} />
+                                                {/* <div className="whitespace-pre-wrap text-sm leading-relaxed">
+                                                </div> */}
+                                            </article>
 
 
                                             {/* <div className="flex items-center gap-2 text-xs text-muted-foreground">

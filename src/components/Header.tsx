@@ -24,13 +24,13 @@ export function Header({ chatHistory, selectedChatId, onChatSelect, onNewChat, o
             {/* Left side - Mobile menu and title */}
             <div className="flex items-center gap-4">
                 {/* Mobile sidebar trigger */}
-                <Sheet>
+                <Sheet >
                     <SheetTrigger asChild>
                         <Button variant="ghost" size="icon" className="md:hidden">
                             <Menu className="h-5 w-5" />
                         </Button>
                     </SheetTrigger>
-                    <SheetContent side="left" className="p-0 w-80">
+                    <SheetContent side="left" className="p-0 w-80 dark">
                         <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                         <Sidebar
                             chatHistory={chatHistory}

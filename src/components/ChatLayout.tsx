@@ -118,7 +118,7 @@ export function ChatLayout({ children }: ChatLayoutProps) {
 
     return (
         <ChatContext.Provider value={contextValue}>
-            <div className="h-screen flex flex-col">
+            <div className="h-[100dvh] flex flex-col bg-background dark text-foreground">
                 <Header
                     chatHistory={chats}
                     selectedChatId={selectedChatId}
